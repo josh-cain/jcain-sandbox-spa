@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="node_modules/auth0-js/build/auth0.js"></script>
+    <script src="auth0-variables.js"></script>
+
+    <script type="text/javascript">
+    var auth0 = new auth0.WebAuth({
+      domain: AUTH0_DOMAIN,
+      redirectUri: AUTH0_CALLBACK_URL,
+      clientID: AUTH0_CLIENT_ID,
+      popupOrigin: 'http://localhost:3000'
+    });
+
+    auth0.popup.callback();
+  </script>
+</head>
+
+<body></body>
+
+</html>

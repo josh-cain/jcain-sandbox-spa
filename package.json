@@ -23,6 +23,5 @@
   },
   "devDependencies": {
     "npm-run-all": "^4.0.2",
-    "serve": "^10.1.1"
   }
 }

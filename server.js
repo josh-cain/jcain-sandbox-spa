@@ -43,4 +43,4 @@ app.post('/api/admin', checkJwt, checkScopesAdmin, function(req, res) {
 });
 
 app.listen(3001);
-console.log('Listening on http://localhost:3001');
+console.log('Node server loaded, listening on http://localhost:3001');

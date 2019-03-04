@@ -19,8 +19,8 @@ fs.readFile('index.html.mustache', function (err, data) {
 		res.send(output);
 	}); 
 
-	// TODO dynamically specify port
-	app.listen(3000);
-	console.log('Node client loaded, listening on http://localhost:3000');
+	const port = process.env.PORT || 3000;
+	app.listen(port);
+	console.log('Node client loaded, listening on http://localhost:' + port);
 });
 

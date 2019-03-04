@@ -13,14 +13,22 @@ if (!process.env.AUTH0_DOMAIN || !process.env.AUTH0_AUDIENCE) {
 
 fs.readFile('index.html.mustache', function (err, data) {
 	if (err) throw err;
-	var output = mustache.render(data.toString(), process.env);
 
+	var indexContent = mustache.render(data.toString(), process.env);
 	app.get('/', function(req, res) {
-		res.send(output);
+		res.send(indexContent);
 	}); 
 
-	const port = process.env.PORT || 3000;
-	app.listen(port);
-	console.log('Node client loaded, listening on http://localhost:' + port);
-});
+	fs.readFile('app.js.mustache', function (err, data) {
+		if (err) throw err;
 
+		var appJsContent = mustache.render(data.toString(), process.env);
+		app.get('/app.js', function(req, res) {
+			res.send(appJsContent);
+		});
+
+		const port = process.env.PORT || 3000;
+		app.listen(port);
+		console.log('Node client loaded, listening on http://localhost:' + port);
+	});
+});

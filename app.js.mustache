@@ -10,7 +10,7 @@ window.addEventListener('load', function() {
   loadingSpinner.style.display = 'none';
 
   var userProfile;
-  var apiUrl = 'http://localhost:3001/api';
+  var apiUrl = '{{{ AUTH0_API_URL }}}';
   var requestedScopes = 'openid profile read:messages write:messages';
 
   var webAuth = new auth0.WebAuth({

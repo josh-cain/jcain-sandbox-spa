@@ -17,6 +17,7 @@ fs.readFile('index.html.mustache', function (err, data) {
 	if (err) throw err;
 
 	var indexContent = mustache.render(data.toString(), process.env);
+	app.options('/', cors());
 	app.get('/', function(req, res) {
 		res.send(indexContent);
 	}); 
@@ -25,6 +26,7 @@ fs.readFile('index.html.mustache', function (err, data) {
 		if (err) throw err;
 
 		var appJsContent = mustache.render(data.toString(), process.env);
+		app.options('/app.js', cors());
 		app.get('/app.js', function(req, res) {
 			res.send(appJsContent);
 		});

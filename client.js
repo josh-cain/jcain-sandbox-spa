@@ -2,8 +2,10 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const mustache = require('mustache');
+const cors = require('cors');
 require('dotenv').config();
 
+app.use(cors());
 app.use('/node_modules', express.static('node_modules'));
 app.use('/static', express.static('static'));
 

@@ -12,12 +12,13 @@ window.addEventListener('load', function() {
   var userProfile;
   var apiUrl = '{{{ AUTH0_API_URL }}}';
   var requestedScopes = 'openid profile read:messages write:messages';
+  var tokenRenewalTimeout;
 
   var webAuth = new auth0.WebAuth({
-    domain: AUTH0_DOMAIN,
-    clientID: AUTH0_CLIENT_ID,
-    redirectUri: AUTH0_CALLBACK_URL,
-    audience: AUTH0_AUDIENCE,
+    domain: '{{{ AUTH0_DOMAIN }}}',
+    clientID: '{{{ AUTH0_CLIENT_ID }}}',
+    redirectUri: '{{{ AUTH0_CALLBACK_URL }}}',
+    audience: '{{{ AUTH0_AUDIENCE }}}',
     responseType: 'token id_token',
     scope: requestedScopes,
     leeway: 60
@@ -44,6 +45,10 @@ window.addEventListener('load', function() {
   var callPrivateMessage = document.getElementById('call-private-message');
   var pingMessage = document.getElementById('ping-message');
   var adminMessage = document.getElementById('ping-message');
+
+  var checkSessionBtn = document.getElementById('btn-renew-token');
+  var accessTokenMessage = document.getElementById('access-token-message');
+  var tokenExpiryDate = document.getElementById('token-expiry-date');
 
   pingPublic.addEventListener('click', function() {
     callAPI('/public', false, 'GET', function(err, response) {
@@ -110,6 +115,10 @@ window.addEventListener('load', function() {
     adminView.style.display = 'inline-block';
   });
 
+  checkSessionBtn.addEventListener('click', function() {
+    renewTokens();
+  });
+
   function login() {
     webAuth.authorize();
   }
@@ -130,6 +139,7 @@ window.addEventListener('load', function() {
 
     accessToken = authResult.accessToken;
     idToken = authResult.idToken;
+    scheduleRenewal();
   }
 
   function renewTokens() {
@@ -175,8 +185,9 @@ window.addEventListener('load', function() {
       profileViewBtn.style.display = 'inline-block';
       pingPrivate.style.display = 'inline-block';
       callPrivateMessage.style.display = 'none';
-      loginStatus.innerHTML =
-        'You are logged in! You can now view your admin area.';
+      loginStatus.innerHTML = 'You are logged in! You can now view your admin area.';
+      tokenExpiryDate.innerHTML = JSON.stringify(new Date(parseInt(expiresAt)));
+      checkSessionBtn.style.display = 'inline-block';
     } else {
       homeView.style.display = 'inline-block';
       loginBtn.style.display = 'inline-block';
@@ -188,8 +199,9 @@ window.addEventListener('load', function() {
       pingView.style.display = 'none';
       pingPrivate.style.display = 'none';
       callPrivateMessage.style.display = 'block';
-      loginStatus.innerHTML =
-        'You are not logged in! Please log in to continue.';
+      loginStatus.innerHTML = 'You are not logged in! Please log in to continue.';
+      tokenExpiryDate.innerHTML = '(not authenticated)';
+      checkSessionBtn.style.display = 'none';
     }
     if (!isAuthenticated || !userHasScopes(['write:messages'])) {
       adminViewBtn.style.display = 'none';
@@ -280,4 +292,14 @@ window.addEventListener('load', function() {
     };
     xhr.send();
   }
+
+  function scheduleRenewal() {
+    var delay = expiresAt - Date.now();
+    if (delay > 0) {
+      tokenRenewalTimeout = setTimeout(function() {
+        renewTokens();
+      }, delay);
+    }
+  }
+  
 });

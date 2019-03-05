@@ -29,6 +29,10 @@
               Profile
           </button>
 
+          <button id="btn-renew-token" class="btn btn-primary btn-margin">
+              Renew Token
+          </button>
+
           <button id="btn-ping-view" class="btn btn-primary btn-margin">
               Ping
           </button>
@@ -53,6 +57,13 @@
       <!-- home view -->
       <div id="home-view">
         <h4></h4>
+        <div id="access-token-message">
+          <h3>About Your Access Token</h3>
+          <p>Your <code>access_token</code> has an expiry date of: <span id="token-expiry-date"></span></p>
+          <p>The token has been scheduled for renewal, but you can also renew it manually from the
+            navbar if you don't want to wait. This manual renewal button is really just for demonstration and you probably
+            won't want such a control in your actual application.</p>
+        </div>
       </div>
 
       <!-- profile view -->

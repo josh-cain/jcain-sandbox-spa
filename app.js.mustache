@@ -120,7 +120,9 @@ window.addEventListener('load', function() {
   });
 
   function login() {
-    webAuth.authorize();
+    webAuth.authorize({
+      max_age: 1
+    });
   }
 
   function localLogin(authResult) {
@@ -242,10 +244,20 @@ window.addEventListener('load', function() {
   function handleAuthentication() {
     webAuth.parseHash(function(err, authResult) {
       if (authResult && authResult.accessToken && authResult.idToken) {
-        window.location.hash = '';
-        localLogin(authResult);
-        loginBtn.style.display = 'none';
-        homeView.style.display = 'inline-block';
+        var base64Url = authResult.idToken.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const decodedIdToken = JSON.parse(window.atob(base64));
+        const minAuthTimeSeconds = (Date.now() / 1000) - 10;
+        console.log("Got ID token: " + JSON.stringify(decodedIdToken));
+        console.log("Determining if idToken auth time: " + decodedIdToken.auth_time + " is greater than min rquired: " + minAuthTimeSeconds);
+        if (!decodedIdToken.auth_time || decodedIdToken.auth_time < minAuthTimeSeconds) {
+          alert('Error: auth_time does not indicate a fresh login took place');
+        } else {
+          window.location.hash = '';
+          localLogin(authResult);
+          loginBtn.style.display = 'none';
+          homeView.style.display = 'inline-block';
+        }
       } else if (err) {
         homeView.style.display = 'inline-block';
         console.log(err);
